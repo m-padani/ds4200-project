@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MBTA Transit Inequality | DS4200 Final Project</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+  <header class="hero">
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <p class="hero-meta">DS4200 Final Project • Northeastern University</p>
+        <h1>MBTA Transit Inequality</h1>
+        <p class="subtitle">
+          Analyzing prediction reliability and rider demographics across MBTA transit modes and subway lines.
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tab-nav" aria-label="Section navigation">
+    <div class="container tab-nav-inner">
+      <a href="#overview" class="tab-link">Overview</a>
+      <a href="#references" class="tab-link">References</a>
+      <a href="#viz1" class="tab-link">1. Accuracy Over Time</a>
+      <a href="#viz2" class="tab-link">2. Time Horizon</a>
+      <a href="#viz3" class="tab-link">3. Demographics</a>
+      <a href="#viz4" class="tab-link">4. Subway vs. Minority</a>
+      <a href="#viz5" class="tab-link">5. Racial Composition</a>
+      <a href="#viz6" class="tab-link">6. Line Accuracy</a>
+      <a href="#summary" class="tab-link">Summary</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+      <section id="overview" class="card overview-card">
+        <div class="section-heading no-number">
+          <div>
+            <p class="eyebrow">Project framing</p>
+            <h2>Project Overview</h2>
+          </div>
+        </div>
+
+        <div class="overview-grid">
+          <div class="overview-block">
+            <h3>Research Question</h3>
+            <p>
+              This project asks whether MBTA prediction accuracy is distributed evenly across transit services
+              and whether differences in service reliability overlap with differences in rider demographics.
+              More specifically, it examines whether unreliable service information may contribute to unequal
+              rider experiences across Boston’s transit system.
+            </p>
+            <p>
+              The analysis focuses on two connected questions. First, how does reliability vary across transit
+              modes and subway lines over time? Second, do those operational differences overlap with patterns
+              of transit dependence, income, race, and household vehicle access?
+            </p>
+          </div>
+
+          <div class="overview-block">
+            <h3>Data Sources</h3>
+            <p>
+              Two datasets support the analysis. The first is MBTA rapid transit and bus prediction accuracy
+              data, which includes weekly prediction counts, accurate predictions, service mode, and route
+              identifiers. The second is the MBTA 2024 System-Wide Passenger Survey, which includes weighted
+              demographic measures such as low-income status, minority status, race, and vehicle access across
+              MBTA service modes and rapid transit groupings.
+            </p>
+            <p>
+              After cleaning, the data was used to compute accuracy rate, error rate, rolling accuracy, and
+              route-level summaries. These datasets are well suited to the project because they allow service
+              quality and rider composition to be examined together. One limitation is that the survey data is
+              aggregated, so it cannot capture every rider-level difference within a line or neighborhood.
+            </p>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span class="stat-value">2020–2026</span>
+            <span class="stat-label">Prediction data range</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value">4</span>
+            <span class="stat-label">Modes compared</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value">8</span>
+            <span class="stat-label">Subway lines tracked</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value">6</span>
+            <span class="stat-label">Interactive visuals</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="references" class="card">
+        <div class="section-heading no-number">
+          <div>
+            <p class="eyebrow">Context</p>
+            <h2>References</h2>
+          </div>
+        </div>
+
+        <ul class="reference-list">
+          <li>
+            <a href="https://www.mbta.com/performance-metrics" target="_blank" rel="noopener noreferrer">
+              MBTA Performance Metrics
+            </a>
+          </li>
+          <li>
+            <a href="https://www.bostonmpo.org/data/calendar/htmls/2024/0201_MPO/MBTA_TitleVI_Monitoring_WorkScope.html" target="_blank" rel="noopener noreferrer">
+              MBTA Title VI Program Monitoring
+            </a>
+          </li>
+          <li>
+            <a href="https://www.mbta.com/projects/better-bus-project" target="_blank" rel="noopener noreferrer">
+              MBTA Better Bus Project
+            </a>
+          </li>
+        </ul>
+      </section>
+
+      <section id="viz1" class="card">
+        <div class="section-heading">
+          <span class="section-number">1</span>
+          <div>
+            <p class="eyebrow">Visualization 1</p>
+            <h2>Prediction Accuracy Over Time</h2>
+          </div>
+        </div>
+
+        <div id="chart1" class="chart chart-full"></div>
+
+        <div class="insight-block">
+          <h3>Interpretation</h3>
+          <p>
+            This time series shows a persistent reliability gap between bus and subway predictions across the
+            2020 to 2026 period. Bus predictions remain consistently stronger, usually staying in the mid-80%
+            range, while subway accuracy falls more often into the upper-70% to low-80% range. The brush
+            interaction helps isolate local patterns such as short-term dips, seasonal shifts, and the broader
+            widening gap after 2023.
+          </p>
+          <p>
+            In equity terms, this matters because inaccurate arrival information affects how riders plan
+            commutes, transfers, and arrival times for work or school. A sustained gap means that prediction
+            quality is not evenly distributed across the system. Reliability here is not just a technical
+            metric. It shapes whether transit information can be trusted as a daily planning tool.
+          </p>
+        </div>
+      </section>
+
+      <section id="viz2" class="card">
+        <div class="section-heading">
+          <span class="section-number">2</span>
+          <div>
+            <p class="eyebrow">Visualization 2</p>
+            <h2>Prediction Accuracy by Time Horizon</h2>
+          </div>
+        </div>
+
+        <div id="viz2" class="chart"></div>
+
+        <div class="insight-block">
+          <h3>Interpretation</h3>
+          <p>
+            This chart compares prediction accuracy across forecast windows for bus and subway service. The
+            pattern matters because overall averages can hide whether systems perform differently when riders
+            are planning in advance versus checking real-time arrivals. Hovering reveals the exact values for
+            each bar.
+          </p>
+          <p>
+            The visual suggests that subway prediction quality weakens more noticeably at longer horizons,
+            while bus predictions remain comparatively steadier. That means riders relying on subway
+            information to make forward-looking travel decisions may face greater uncertainty. In practical
+            terms, weaker long-horizon predictions can translate into less confidence when deciding whether to
+            leave early, wait, transfer, or seek another option.
+          </p>
+        </div>
+      </section>
+
+      <section id="viz3" class="card">
+        <div class="section-heading">
+          <span class="section-number">3</span>
+          <div>
+            <p class="eyebrow">Visualization 3</p>
+            <h2>Rider Demographics by Transit Mode</h2>
+          </div>
+        </div>
+
+        <div id="viz3" class="chart"></div>
+
+        <div class="insight-block">
+          <h3>Interpretation</h3>
+          <p>
+            This view compares low-income share, minority share, and zero-vehicle households across MBTA
+            modes. The dropdown allows the same layout to be reused across measures, making it easier to
+            compare how the demographic ranking of modes shifts or remains stable.
+          </p>
+          <p>
+            Bus riders stand out as the most transit-dependent group across all three indicators, while ferry
+            riders sit at the opposite end. That pattern is essential to the project’s equity framing. It
+            shows that the system does not serve one uniform public. Different modes serve different
+            populations, and those differences matter when reliability and information quality are unevenly
+            distributed.
+          </p>
+        </div>
+      </section>
+
+      <section id="viz4" class="card">
+        <div class="section-heading">
+          <span class="section-number">4</span>
+          <div>
+            <p class="eyebrow">Visualization 4</p>
+            <h2>Subway Accuracy vs. Minority Ridership</h2>
+          </div>
+        </div>
+
+        <div id="chart4" class="chart chart-full"></div>
+
+        <div class="insight-block">
+          <h3>Interpretation</h3>
+          <p>
+            This scatter plot directly tests whether line-level prediction quality aligns with differences in
+            minority ridership. Each point represents a subway line, while point size shows total prediction
+            volume. Hovering reveals line name, prediction accuracy, minority ridership, low-income ridership,
+            and total predictions together.
+          </p>
+          <p>
+            The pattern is not perfectly linear, which suggests that operational factors such as
+            infrastructure, service complexity, or line conditions also influence reliability. Still, the
+            chart makes clear that accuracy is not evenly distributed across lines that serve different rider
+            populations. That matters because inequity can emerge not only between modes, but also within the
+            subway network itself.
+          </p>
+        </div>
+      </section>
+
+      <section id="viz5" class="card">
+        <div class="section-heading">
+          <span class="section-number">5</span>
+          <div>
+            <p class="eyebrow">Visualization 5</p>
+            <h2>Racial Composition by Transit Mode</h2>
+          </div>
+        </div>
+
+        <div id="viz5" class="chart chart-full"></div>
+
+        <div class="insight-block">
+          <h3>Interpretation</h3>
+          <p>
+            The stacked bar chart shows that rider composition varies sharply by mode. Bus riders are the most
+            racially diverse, while ferry riders are the least diverse. The click-to-highlight interaction
+            allows one category to be isolated across all modes without removing the broader distribution.
+          </p>
+          <p>
+            This matters because service quality should be evaluated alongside who is being served. Even when
+            the MBTA’s overall performance metrics appear acceptable, the lived impact can still differ
+            substantially if the parts of the system used by different groups do not perform equally well. This
+            chart supports the broader claim that transit reliability has an equity dimension, not just an
+            operational one.
+          </p>
+        </div>
+      </section>
+
+      <section id="viz6" class="card">
+        <div class="section-heading">
+          <span class="section-number">6</span>
+          <div>
+            <p class="eyebrow">Visualization 6</p>
+            <h2>Subway Line Accuracy Over Time</h2>
+          </div>
+        </div>
+
+        <div id="viz6" class="chart"></div>
+
+        <div class="insight-block">
+          <h3>Interpretation</h3>
+          <p>
+            This final visualization shows that reliability varies not only by mode, but also across subway
+            lines over time. Some lines remain comparatively stable, while others experience repeated drops and
+            wider swings in performance. The legend toggle helps reduce clutter, and the hover crosshair allows
+            closer comparison at specific dates.
+          </p>
+          <p>
+            The significance of this chart is that it shifts the equity question from broad averages to the
+            rider’s actual line-level experience. If some lines consistently underperform, then the quality of
+            transit information is geographically uneven. Riders on those lines face a different system than
+            riders on stronger-performing lines, even if both are formally part of the same network.
+          </p>
+        </div>
+      </section>
+
+      <section id="summary" class="card">
+        <div class="section-heading no-number">
+          <div>
+            <p class="eyebrow">Conclusion</p>
+            <h2>Summary of Findings</h2>
+          </div>
+        </div>
+
+        <div class="summary-copy">
+          <p>
+            Across all six visualizations, the central result is consistent: transit reliability is not evenly
+            distributed across the MBTA system. Differences appear between bus and subway service, across
+            forecast horizons, and within subway lines themselves. At the same time, rider demographics differ
+            sharply across modes, especially in terms of income, race, and access to personal vehicles.
+          </p>
+          <p>
+            These patterns suggest that prediction accuracy should be understood as part of a broader equity
+            issue. Riders do not interact with transit information under identical conditions, and uneven
+            service quality can amplify existing transportation disadvantages. Future work could extend this
+            analysis with station-level data, delay outcomes, and neighborhood-level patterns to better connect
+            prediction accuracy to rider impacts on the ground.
+          </p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <p class="footer-title">MBTA Transit Inequality</p>
+        <p class="footer-subtitle">DS4200 Final Project • Northeastern University</p>
+      </div>
+      <div class="footer-names">
+        <span>Numa Ali</span>
+        <span>Maira Padani</span>
+        <span>Saiuri Parimi</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+[
+  {
+    "mode":"bus",
+    "bin":"0-3 min",
+    "accuracy":0.811
+  },
+  {
+    "mode":"bus",
+    "bin":"12-30 min",
+    "accuracy":0.8713
+  },
+  {
+    "mode":"bus",
+    "bin":"3-6 min",
+    "accuracy":0.8088
+  },
+  {
+    "mode":"bus",
+    "bin":"6-12 min",
+    "accuracy":0.8459
+  },
+  {
+    "mode":"subway",
+    "bin":"0-3 min",
+    "accuracy":0.8575
+  },
+  {
+    "mode":"subway",
+    "bin":"12-30 min",
+    "accuracy":0.7703
+  },
+  {
+    "mode":"subway",
+    "bin":"3-6 min",
+    "accuracy":0.8459
+  },
+  {
+    "mode":"subway",
+    "bin":"6-12 min",
+    "accuracy":0.8554
+  }
+]

@@ -1,0 +1,162 @@
+[
+  {
+    "service_mode":"Commuter Rail",
+    "category":"American Indian or Alaska Native",
+    "weighted_percent":1.4
+  },
+  {
+    "service_mode":"Commuter Rail",
+    "category":"Asian",
+    "weighted_percent":11.2
+  },
+  {
+    "service_mode":"Commuter Rail",
+    "category":"Black or African American",
+    "weighted_percent":22.7
+  },
+  {
+    "service_mode":"Commuter Rail",
+    "category":"Middle Eastern or North African",
+    "weighted_percent":2.8
+  },
+  {
+    "service_mode":"Commuter Rail",
+    "category":"Native Hawaiian or other Pacific Islander",
+    "weighted_percent":0.4
+  },
+  {
+    "service_mode":"Commuter Rail",
+    "category":"White",
+    "weighted_percent":57.7
+  },
+  {
+    "service_mode":"Commuter Rail",
+    "category":"Other",
+    "weighted_percent":7.5
+  },
+  {
+    "service_mode":"Commuter Rail",
+    "category":"Prefer not to say",
+    "weighted_percent":2.6
+  },
+  {
+    "service_mode":"Bus",
+    "category":"American Indian or Alaska Native",
+    "weighted_percent":3.3
+  },
+  {
+    "service_mode":"Bus",
+    "category":"Asian",
+    "weighted_percent":11.7
+  },
+  {
+    "service_mode":"Bus",
+    "category":"Black or African American",
+    "weighted_percent":35.2
+  },
+  {
+    "service_mode":"Bus",
+    "category":"Middle Eastern or North African",
+    "weighted_percent":3.2
+  },
+  {
+    "service_mode":"Bus",
+    "category":"Native Hawaiian or other Pacific Islander",
+    "weighted_percent":0.4
+  },
+  {
+    "service_mode":"Bus",
+    "category":"White",
+    "weighted_percent":42.9
+  },
+  {
+    "service_mode":"Bus",
+    "category":"Other",
+    "weighted_percent":8.2
+  },
+  {
+    "service_mode":"Bus",
+    "category":"Prefer not to say",
+    "weighted_percent":3.4
+  },
+  {
+    "service_mode":"Ferry",
+    "category":"Black or African American",
+    "weighted_percent":9.3
+  },
+  {
+    "service_mode":"Rapid Transit or Bus Rapid Transit",
+    "category":"American Indian or Alaska Native",
+    "weighted_percent":1.9
+  },
+  {
+    "service_mode":"Rapid Transit or Bus Rapid Transit",
+    "category":"Asian",
+    "weighted_percent":14.7
+  },
+  {
+    "service_mode":"Rapid Transit or Bus Rapid Transit",
+    "category":"Black or African American",
+    "weighted_percent":21.2
+  },
+  {
+    "service_mode":"Rapid Transit or Bus Rapid Transit",
+    "category":"Middle Eastern or North African",
+    "weighted_percent":3.2
+  },
+  {
+    "service_mode":"Rapid Transit or Bus Rapid Transit",
+    "category":"Native Hawaiian or other Pacific Islander",
+    "weighted_percent":0.6
+  },
+  {
+    "service_mode":"Rapid Transit or Bus Rapid Transit",
+    "category":"White",
+    "weighted_percent":53.5
+  },
+  {
+    "service_mode":"Rapid Transit or Bus Rapid Transit",
+    "category":"Other",
+    "weighted_percent":8.1
+  },
+  {
+    "service_mode":"Rapid Transit or Bus Rapid Transit",
+    "category":"Prefer not to say",
+    "weighted_percent":3.3
+  },
+  {
+    "service_mode":"Ferry",
+    "category":"Middle Eastern or North African",
+    "weighted_percent":2.2
+  },
+  {
+    "service_mode":"Ferry",
+    "category":"Native Hawaiian or other Pacific Islander",
+    "weighted_percent":0.0
+  },
+  {
+    "service_mode":"Ferry",
+    "category":"White",
+    "weighted_percent":80.7
+  },
+  {
+    "service_mode":"Ferry",
+    "category":"Other",
+    "weighted_percent":3.9
+  },
+  {
+    "service_mode":"Ferry",
+    "category":"Prefer not to say",
+    "weighted_percent":1.0
+  },
+  {
+    "service_mode":"Ferry",
+    "category":"American Indian or Alaska Native",
+    "weighted_percent":3.3
+  },
+  {
+    "service_mode":"Ferry",
+    "category":"Asian",
+    "weighted_percent":4.8
+  }
+]
