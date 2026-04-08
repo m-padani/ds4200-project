@@ -1,6 +1,6 @@
 // ======================================
 // MBTA Transit Inequality
-// files/script.js
+// script.js
 // ======================================
 
 // ---------- Altair / Vega-Lite ----------
@@ -47,8 +47,8 @@ async function drawViz2() {
   const labels = { bus: "Bus", subway: "Subway" };
 
   const width = 900;
-  const height = 380;
-  const margin = { top: 26, right: 40, bottom: 60, left: 70 };
+  const height = 420;
+  const margin = { top: 50, right: 40, bottom: 70, left: 70 };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
@@ -57,6 +57,15 @@ async function drawViz2() {
     .attr("viewBox", `0 0 ${width} ${height}`)
     .style("width", "100%")
     .style("height", "auto");
+
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", 24)
+    .attr("text-anchor", "middle")
+    .style("font-size", "16px")
+    .style("font-weight", "700")
+    .style("fill", "#0c2d6b")
+    .text("Prediction Accuracy by Time Horizon");
 
   const g = svg.append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
@@ -73,13 +82,21 @@ async function drawViz2() {
     .call(d3.axisLeft(y).ticks(5).tickFormat(d => `${(d * 100).toFixed(0)}%`));
 
   g.append("text")
+    .attr("x", innerWidth / 2)
+    .attr("y", innerHeight + 48)
+    .attr("text-anchor", "middle")
+    .style("font-size", "12px")
+    .style("fill", "#243244")
+    .text("Prediction Time Horizon");
+
+  g.append("text")
     .attr("transform", "rotate(-90)")
     .attr("x", -innerHeight / 2)
     .attr("y", -48)
     .attr("text-anchor", "middle")
     .style("font-size", "12px")
     .style("fill", "#243244")
-    .text("Accuracy (%)");
+    .text("Prediction Accuracy (%)");
 
   const tooltip = d3.select("body")
     .append("div")
@@ -176,8 +193,8 @@ async function drawViz3() {
     `);
 
   const width = 900;
-  const height = 360;
-  const margin = { top: 34, right: 70, bottom: 42, left: 180 };
+  const height = 390;
+  const margin = { top: 34, right: 70, bottom: 52, left: 180 };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
@@ -218,6 +235,14 @@ async function drawViz3() {
   g.append("g")
     .attr("transform", `translate(0,${innerHeight})`)
     .call(d3.axisBottom(x).ticks(5).tickFormat(d => `${d}%`));
+
+  g.append("text")
+    .attr("x", innerWidth / 2)
+    .attr("y", innerHeight + 40)
+    .attr("text-anchor", "middle")
+    .style("font-size", "12px")
+    .style("fill", "#243244")
+    .text("Share of Riders (%)");
 
   const bars = g.selectAll(".bar")
     .data(data)
@@ -308,8 +333,8 @@ async function drawViz5() {
   });
 
   const width = 980;
-  const height = 380;
-  const margin = { top: 54, right: 30, bottom: 42, left: 180 };
+  const height = 420;
+  const margin = { top: 70, right: 30, bottom: 52, left: 180 };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
@@ -327,6 +352,15 @@ async function drawViz5() {
     .style("width", "100%")
     .style("height", "auto");
 
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", 24)
+    .attr("text-anchor", "middle")
+    .style("font-size", "16px")
+    .style("font-weight", "700")
+    .style("fill", "#0c2d6b")
+    .text("Racial Composition by Transit Mode");
+
   const g = svg.append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
@@ -338,6 +372,14 @@ async function drawViz5() {
   g.append("g")
     .attr("transform", `translate(0,${innerHeight})`)
     .call(d3.axisBottom(x).ticks(5).tickFormat(d => `${d}%`));
+
+  g.append("text")
+    .attr("x", innerWidth / 2)
+    .attr("y", innerHeight + 40)
+    .attr("text-anchor", "middle")
+    .style("font-size", "12px")
+    .style("fill", "#243244")
+    .text("Share of Riders (%)");
 
   const stack = d3.stack().keys(raceOrder)(stackData);
 
@@ -443,8 +485,8 @@ async function drawViz6() {
   });
 
   const width = 980;
-  const height = 460;
-  const margin = { top: 32, right: 36, bottom: 44, left: 58 };
+  const height = 500;
+  const margin = { top: 50, right: 36, bottom: 60, left: 58 };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
@@ -462,6 +504,15 @@ async function drawViz6() {
     .style("width", "100%")
     .style("height", "auto");
 
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", 24)
+    .attr("text-anchor", "middle")
+    .style("font-size", "16px")
+    .style("font-weight", "700")
+    .style("fill", "#0c2d6b")
+    .text("Subway Line Accuracy Over Time");
+
   const g = svg.append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
@@ -476,13 +527,21 @@ async function drawViz6() {
     .call(d3.axisLeft(y).ticks(6).tickFormat(d => `${d}%`));
 
   g.append("text")
+    .attr("x", innerWidth / 2)
+    .attr("y", innerHeight + 44)
+    .attr("text-anchor", "middle")
+    .style("font-size", "12px")
+    .style("fill", "#243244")
+    .text("Date");
+
+  g.append("text")
     .attr("transform", "rotate(-90)")
     .attr("x", -innerHeight / 2)
     .attr("y", -42)
     .attr("text-anchor", "middle")
     .style("font-size", "12px")
     .style("fill", "#243244")
-    .text("Accuracy (%)");
+    .text("Prediction Accuracy (%)");
 
   const lineGenerator = d3.line()
     .x(d => x(d.date))
