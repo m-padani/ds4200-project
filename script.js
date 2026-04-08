@@ -6,7 +6,7 @@
 // ---------- Altair / Vega-Lite ----------
 async function loadAltairCharts() {
   try {
-    await vegaEmbed("#chart1", "../site/altair/chart1.json", {
+    await vegaEmbed("#chart1", "site/altair/chart1.json", {
       actions: false,
       renderer: "svg"
     });
@@ -19,7 +19,7 @@ async function loadAltairCharts() {
   }
 
   try {
-    await vegaEmbed("#chart4", "../site/altair/chart4.json", {
+    await vegaEmbed("#chart4", "site/altair/chart4.json", {
       actions: false,
       renderer: "svg"
     });
@@ -34,7 +34,7 @@ async function loadAltairCharts() {
 
 // ---------- Visualization 2 ----------
 async function drawViz2() {
-  const data = await d3.json("../site/data/viz2.json");
+  const data = await d3.json("site/data/viz2.json");
 
   if (!data || data.length === 0) {
     d3.select("#viz2").append("p").text("Visualization 2 data is unavailable.");
@@ -139,7 +139,7 @@ async function drawViz2() {
 
 // ---------- Visualization 3 ----------
 async function drawViz3() {
-  const data = await d3.json("../site/data/viz3.json");
+  const data = await d3.json("site/data/viz3.json");
 
   if (!data || data.length === 0) {
     d3.select("#viz3").append("p").text("Visualization 3 data is unavailable.");
@@ -263,7 +263,7 @@ async function drawViz3() {
 
 // ---------- Visualization 5 ----------
 async function drawViz5() {
-  const raw = await d3.json("../site/data/viz5.json");
+  const raw = await d3.json("site/data/viz5.json");
 
   if (!raw || raw.length === 0) {
     d3.select("#viz5").append("p").text("Visualization 5 data is unavailable.");
@@ -417,7 +417,7 @@ async function drawViz5() {
 
 // ---------- Visualization 6 ----------
 async function drawViz6() {
-  const raw = await d3.json("../site/data/viz6.json");
+  const raw = await d3.json("site/data/viz6.json");
 
   if (!raw || raw.length === 0) {
     d3.select("#viz6").append("p").text("Visualization 6 data is unavailable.");
