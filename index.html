@@ -299,31 +299,55 @@
           </p>
         </div>
       </section>
-
       <section id="summary" class="card">
-        <div class="section-heading no-number">
-          <div>
-            <p class="eyebrow">Conclusion</p>
-            <h2>Summary of Findings</h2>
-          </div>
-        </div>
+  <div class="section-heading no-number">
+    <div>
+      <p class="eyebrow">Conclusion</p>
+      <h2>Summary of Findings and Future Work</h2>
+    </div>
+  </div>
 
-        <div class="summary-copy">
-          <p>
-            Across all six visualizations, the central result is consistent: transit reliability is not evenly
-            distributed across the MBTA system. Differences appear between bus and subway service, across
-            forecast horizons, and within subway lines themselves. At the same time, rider demographics differ
-            sharply across modes, especially in terms of income, race, and access to personal vehicles.
-          </p>
-          <p>
-            These patterns suggest that prediction accuracy should be understood as part of a broader equity
-            issue. Riders do not interact with transit information under identical conditions, and uneven
-            service quality can amplify existing transportation disadvantages. Future work could extend this
-            analysis with station-level data, delay outcomes, and neighborhood-level patterns to better connect
-            prediction accuracy to rider impacts on the ground.
-          </p>
-        </div>
-      </section>
+  <div class="summary-copy">
+    <p>
+      The visualizations show that prediction accuracy varies across transit modes and routes, with bus systems generally
+      more consistent and some subway lines, such as Green Line E, performing worse. These differences suggest that
+      reliability is uneven and may affect rider experience across communities. The demographic analysis also indicates
+      that more vulnerable populations rely more on certain transit modes, raising potential equity concerns.
+    </p>
+    <p>
+      In the future, this work could be improved by using more detailed data, such as neighborhood-level information,
+      and incorporating external factors like weather or service disruptions to better explain changes in accuracy.
+    </p>
+
+    <h3>Analysis</h3>
+    <p>
+      Our analysis examines how transit prediction reliability varies across modes, routes, and time, and how these
+      differences may contribute to infrastructure inequality in Boston. Using the cleaned dataset, we created
+      additional features such as accuracy rate, error rate, rolling accuracy, and route-level performance categories
+      to better understand reliability patterns.
+    </p>
+    <p>
+      We first compared prediction accuracy across transit modes and found that bus predictions were generally more
+      consistent than subway predictions in the updated visualizations. This suggests that riders across different parts
+      of the system do not receive the same level of reliability in transit information.
+    </p>
+    <p>
+      We then analyzed trends over time, which showed that reliability changes across weeks, across forecast horizons,
+      and across subway lines. Some lines remained relatively stable, while others showed repeated drops and wider
+      swings in performance.
+    </p>
+    <p>
+      At the demographic level, the visualizations showed that bus riders are more likely to be low-income, minority,
+      and from zero-vehicle households. This means the groups that depend most on transit are often using the parts of
+      the system where information quality and reliability may be less even.
+    </p>
+    <p>
+      Overall, our findings show that transit reliability is unevenly distributed across the MBTA system, and that this
+      unevenness overlaps with differences in who relies on each mode. This supports the idea that transit prediction
+      quality is not only an operational issue, but also an equity issue.
+    </p>
+  </div>
+</section>
     </div>
   </main>
 
