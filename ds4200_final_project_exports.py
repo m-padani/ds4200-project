@@ -371,27 +371,52 @@ Bus and subway show opposite accuracy patterns across prediction windows.Bus acc
 """
 
 # VIZ 3 — D3 — Rider Demographics by Mode (Dropdown Filter)
+# VIZ 3 — D3 — Rider Demographics by Mode (Dropdown Filter)
 
-# VIZ 3 — D3 — Rider Demographics by Mode (Dropdown + Click Interaction)
+demo = survey[survey['aggregation_level'] == 'Service Mode'].copy()
 
-from IPython.display import HTML
-import json
+demo = demo[
+    demo['measure'].isin([
+        'Title VI Low-Income',
+        'Title VI Minority',
+        'Usable Cars'
+    ])
+][['service_mode', 'measure', 'category', 'weighted_percent']]
 
-# Extract demographics at service-mode level
-sm = survey[survey['aggregation_level'] == 'Service Mode']
-demo_records = []
-for mode_name in ['Bus', 'Commuter Rail', 'Rapid Transit or Bus Rapid Transit', 'Ferry']:
-    subset = sm[sm['service_mode'] == mode_name]
-    rec = {'mode': mode_name}
-    li = subset[(subset['measure'] == 'Title VI Low-Income') & (subset['category'] == 'Yes')]
-    if len(li): rec['pct_low_income'] = round(li.iloc[0]['weighted_percent'] * 100, 1)
-    mi = subset[(subset['measure'] == 'Title VI Minority') & (subset['category'] == 'Yes')]
-    if len(mi): rec['pct_minority'] = round(mi.iloc[0]['weighted_percent'] * 100, 1)
-    zc = subset[(subset['measure'] == 'Usable Cars') & (subset['category'] == '0')]
-    if len(zc): rec['pct_zero_car'] = round(zc.iloc[0]['weighted_percent'] * 100, 1)
-    demo_records.append(rec)
+demo = demo[demo['service_mode'].isin([
+    'Bus',
+    'Rapid Transit or Bus Rapid Transit',
+    'Commuter Rail',
+    'Ferry'
+])]
 
-demo_json = json.dumps(demo_records)
+# Keep the values you actually want
+low_income = demo[
+    (demo['measure'] == 'Title VI Low-Income') &
+    (demo['category'] == 'Yes')
+][['service_mode', 'weighted_percent']].rename(columns={'weighted_percent': 'pct_low_income'})
+
+minority = demo[
+    (demo['measure'] == 'Title VI Minority') &
+    (demo['category'] == 'Yes')
+][['service_mode', 'weighted_percent']].rename(columns={'weighted_percent': 'pct_minority'})
+
+zero_car = demo[
+    (demo['measure'] == 'Usable Cars') &
+    (demo['category'].astype(str).str.strip() == '0')
+][['service_mode', 'weighted_percent']].rename(columns={'weighted_percent': 'pct_zero_car'})
+
+demo_wide = low_income.merge(minority, on='service_mode', how='outer') \
+                      .merge(zero_car, on='service_mode', how='outer') \
+                      .fillna(0)
+
+demo_wide = demo_wide.rename(columns={'service_mode': 'mode'})
+
+for col in ['pct_low_income', 'pct_minority', 'pct_zero_car']:
+    demo_wide[col] = (demo_wide[col] * 100).round(1)
+
+demo_json = demo_wide.to_json(orient='records')
+demo_wide.to_json("site/data/viz3.json", orient="records")
 
 viz3_html = f"""
 <div id="viz3" style="background:#fff;padding:20px;border-radius:8px;border:1px solid #ddd;font-family:sans-serif;position:relative">
