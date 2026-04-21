@@ -518,7 +518,7 @@ document.getElementById('demo-select').addEventListener('change', function() {{
 }})();
 </script>
 """
-#HTML(viz3_html)
+HTML(viz3_html)
 
 """Visualization #3 Takeaway: Demographic patterns vary significantly across transit modes, with bus riders representing the most economically vulnerable group, showing the highest shares of low-income, minority, and zero-vehicle households. In contrast, ferry riders reflect a more affluent profile with substantially lower percentages across these measures. This highlights how different transit systems serve distinct populations, and the dropdown interaction allows for deeper comparison across demographic dimensions.
 
