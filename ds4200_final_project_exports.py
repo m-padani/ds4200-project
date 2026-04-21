@@ -274,7 +274,10 @@ bin_mode = (
     .reset_index()
 )
 bin_mode['accuracy'] = (bin_mode['ta'] / bin_mode['tp']).round(4)
-bin_json = bin_mode[['mode', 'bin', 'accuracy']].to_json(orient='records')
+
+bin_export = bin_mode[['mode', 'bin', 'accuracy']]
+bin_json = bin_export.to_json(orient='records')
+bin_export.to_json("site/data/viz2.json", orient="records")
 
 viz2_html = f"""
 <div id="viz2" style="background:#fff;padding:20px;border-radius:8px;border:1px solid #ddd;font-family:sans-serif"></div>
@@ -636,6 +639,7 @@ race = race[race['service_mode'].isin(
 )]
 race['weighted_percent'] = (race['weighted_percent'] * 100).round(1)
 race_json = race.to_json(orient='records')
+race.to_json("site/data/viz5.json", orient="records")
 
 viz5_html = f"""
 <div id="viz5" style="background:#fff;padding:20px;border-radius:8px;border:1px solid #ddd;font-family:sans-serif;position:relative">
@@ -758,7 +762,9 @@ sub_ts = sub_ts.dropna(subset=['accuracy'])
 dates_sorted = sorted(sub_ts['weekly'].unique())
 keep_dates = set(dates_sorted[::4] + [dates_sorted[-1]])
 sub_ts_sampled = sub_ts[sub_ts['weekly'].isin(keep_dates)]
-sub_ts_json = sub_ts_sampled[['weekly', 'route_id', 'accuracy']].to_json(orient='records')
+sub_ts_export = sub_ts_sampled[['weekly', 'route_id', 'accuracy']]
+sub_ts_json = sub_ts_export.to_json(orient='records')
+sub_ts_export.to_json("site/data/viz6.json", orient="records")
 
 viz6_html = f"""
 <div id="viz6" style="background:#fff;padding:20px;border-radius:8px;border:1px solid #ddd;font-family:sans-serif;position:relative">
@@ -883,4 +889,3 @@ At the route level, we identified clear differences in performance. Some routes 
 
 Finally, by introducing error rate alongside accuracy, we were able to better highlight routes with higher levels of unreliability. Overall, our findings show that transit reliability is unevenly distributed, which may contribute to unequal transit experiences across different communities in Boston.
 """
-                                   
