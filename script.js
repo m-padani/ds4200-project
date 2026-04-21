@@ -209,7 +209,7 @@ async function drawViz3() {
     "Bus": "#ed8b00",
     "Rapid Transit or Bus Rapid Transit": "#003da5",
     "Commuter Rail": "#00843d",
-    "Ferry": "#7c878e"
+    "Ferry": "#8e44ad"
   };
 
   const svg = wrapper.append("svg")

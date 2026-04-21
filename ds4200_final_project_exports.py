@@ -395,32 +395,20 @@ from IPython.display import HTML
 
 os.makedirs("site/data", exist_ok=True)
 
-demo = survey.copy()
 
-demo['aggregation_level'] = demo['aggregation_level'].astype(str).str.strip()
+demo = survey[
+    survey['aggregation_level'].astype(str).str.strip() == 'Service Mode'
+].copy()
 
 demo['service_mode'] = demo['service_mode'].astype(str).str.strip()
-
 demo['measure'] = demo['measure'].astype(str).str.strip()
-
 demo['category'] = demo['category'].astype(str).str.strip()
 
-demo = demo[
-
-    demo['aggregation_level'] == 'Service Mode'
-
-]
-
 demo = demo[demo['service_mode'].isin([
-
     'Bus',
-
     'Rapid Transit or Bus Rapid Transit',
-
     'Commuter Rail',
-
     'Ferry'
-
 ])]
 
 low_income = demo[
@@ -440,15 +428,11 @@ zero_car = demo[
 
 demo_wide = low_income.merge(minority, on='service_mode', how='outer')
 demo_wide = demo_wide.merge(zero_car, on='service_mode', how='outer').fillna(0)
-
 demo_wide = demo_wide.rename(columns={'service_mode': 'mode'})
 
 for col in ['pct_low_income', 'pct_minority', 'pct_zero_car']:
     demo_wide[col] = (demo_wide[col] * 100).round(1)
 
-print(demo_wide)
-
-demo_json = demo_wide.to_json(orient='records')
 demo_wide.to_json("site/data/viz3.json", orient="records")
 print(demo_json)
 
