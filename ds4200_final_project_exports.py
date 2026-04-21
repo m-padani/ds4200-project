@@ -372,15 +372,17 @@ Bus and subway show opposite accuracy patterns across prediction windows.Bus acc
 
 # VIZ 3 — D3 — Rider Demographics by Mode (Dropdown Filter)
 # Prepare demographic data for Viz 3
+# VIZ 3 — D3 — Rider Demographics by Mode (Dropdown Filter)
+
 demo = survey[survey['aggregation_level'] == 'Service Mode'].copy()
 
 demo = demo[
     demo['measure'].isin([
-        'Title VI low-income population',
-        'Title VI minority population',
-        'Zero-vehicle households'
+        'Title VI Low-Income',
+        'Title VI Minority',
+        'Usable Cars'
     ])
-][['service_mode', 'measure', 'weighted_percent']]
+][['service_mode', 'measure', 'category', 'weighted_percent']]
 
 demo = demo[demo['service_mode'].isin([
     'Bus',
@@ -388,6 +390,12 @@ demo = demo[demo['service_mode'].isin([
     'Commuter Rail',
     'Ferry'
 ])]
+
+# Keep only the category that represents zero-car households
+demo = demo[
+    ((demo['measure'] == 'Usable Cars') & (demo['category'].astype(str).str.strip() == '0')) |
+    (demo['measure'].isin(['Title VI Low-Income', 'Title VI Minority']))
+].copy()
 
 demo['weighted_percent'] = (demo['weighted_percent'] * 100).round(1)
 
@@ -400,10 +408,12 @@ demo_wide = demo.pivot_table(
 
 demo_wide = demo_wide.rename(columns={
     'service_mode': 'mode',
-    'Title VI low-income population': 'pct_low_income',
-    'Title VI minority population': 'pct_minority',
-    'Zero-vehicle households': 'pct_zero_car'
+    'Title VI Low-Income': 'pct_low_income',
+    'Title VI Minority': 'pct_minority',
+    'Usable Cars': 'pct_zero_car'
 })
+
+demo_wide = demo_wide.fillna(0)
 
 demo_json = demo_wide.to_json(orient='records')
 demo_wide.to_json("site/data/viz3.json", orient="records")
@@ -873,19 +883,18 @@ hover to see exact values at any date.
 
 ###Summary of Findings and Future Work
 
-The visualizations show that prediction accuracy varies across transit modes and routes, with bus systems generally more consistent and some subway lines, such as Green Line E, performing worse. These differences suggest that reliability is uneven and may affect rider experience across communities.The demographic analysis also indicates that more vulnerable populations rely more on certain transit modes, raising potential equity concerns.
+The visualizations show that prediction accuracy varies across transit modes and routes. Bus predictions tend to be more stable over time, while subway performance varies more across lines, with some routes such as the Green Line E consistently underperforming. These differences suggest that reliability is uneven and may affect rider experience across communities. The demographic analysis also indicates that more vulnerable populations rely more on certain transit modes, raising potential equity concerns.
 
-In the future, this work could be improved by using more detailed data, such as neighborhood-level information, and incorporating external factors like weather or service disruptions to better explain changes in accuracy.
+In the future, this work could be improved by incorporating more granular data, such as neighborhood- or station-level information, along with external factors like weather and service disruptions. This would help better explain variation in prediction accuracy and provide a clearer view of how reliability impacts riders.
 
 ###Analysis
-
 Our analysis examines how transit prediction reliability varies across modes, routes, and time, and how these differences may contribute to infrastructure inequality in Boston. Using the cleaned dataset, we created additional features such as accuracy rate, error rate, rolling accuracy, and route-level performance categories to better understand reliability patterns.
 
-We first compared prediction accuracy across transit modes and found that subway services generally have higher and more consistent accuracy than bus routes. This suggests that bus services are more affected by external factors, leading to lower reliability.
+We first compared prediction accuracy across transit modes and found that bus predictions are generally more stable over time, while subway accuracy varies more across lines and time periods. This suggests that different operational factors affect each mode in distinct ways.
 
-We then analyzed trends over time using rolling accuracy, which helped smooth fluctuations and reveal overall patterns. The results show that prediction accuracy changes over time, indicating that reliability is not consistent and may be influenced by operational or seasonal factors.
+We then analyzed trends over time using rolling accuracy, which helped smooth short-term fluctuations and reveal broader patterns. The results show that prediction accuracy changes over time, indicating that reliability is not constant and may be influenced by operational or seasonal conditions.
 
-At the route level, we identified clear differences in performance. Some routes consistently fall into the low performance category, indicating areas where riders may experience greater uncertainty and less reliable service.
+At the route level, we identified clear differences in performance. Some routes consistently fall into lower performance categories, indicating areas where riders may experience greater uncertainty and less reliable service.
 
 Finally, by introducing error rate alongside accuracy, we were able to better highlight routes with higher levels of unreliability. Overall, our findings show that transit reliability is unevenly distributed, which may contribute to unequal transit experiences across different communities in Boston.
 """
