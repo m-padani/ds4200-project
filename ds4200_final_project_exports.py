@@ -372,43 +372,26 @@ Bus and subway show opposite accuracy patterns across prediction windows.Bus acc
 
 # VIZ 3 — D3 — Rider Demographics by Mode (Dropdown Filter)
 
-# VIZ 3 — D3 — Rider Demographics by Mode (Dropdown Filter)
-# Prepare demographic data for Viz 3
-demo = survey[survey['aggregation_level'] == 'Service Mode'].copy()
+# VIZ 3 — D3 — Rider Demographics by Mode (Dropdown + Click Interaction)
 
-demo = demo[
-    demo['measure'].isin([
-        'Title VI low-income population',
-        'Title VI minority population',
-        'Zero-vehicle households'
-    ])
-][['service_mode', 'measure', 'weighted_percent']]
+from IPython.display import HTML
+import json
 
-demo = demo[demo['service_mode'].isin([
-    'Bus',
-    'Rapid Transit or Bus Rapid Transit',
-    'Commuter Rail',
-    'Ferry'
-])]
+# Extract demographics at service-mode level
+sm = survey[survey['aggregation_level'] == 'Service Mode']
+demo_records = []
+for mode_name in ['Bus', 'Commuter Rail', 'Rapid Transit or Bus Rapid Transit', 'Ferry']:
+    subset = sm[sm['service_mode'] == mode_name]
+    rec = {'mode': mode_name}
+    li = subset[(subset['measure'] == 'Title VI Low-Income') & (subset['category'] == 'Yes')]
+    if len(li): rec['pct_low_income'] = round(li.iloc[0]['weighted_percent'] * 100, 1)
+    mi = subset[(subset['measure'] == 'Title VI Minority') & (subset['category'] == 'Yes')]
+    if len(mi): rec['pct_minority'] = round(mi.iloc[0]['weighted_percent'] * 100, 1)
+    zc = subset[(subset['measure'] == 'Usable Cars') & (subset['category'] == '0')]
+    if len(zc): rec['pct_zero_car'] = round(zc.iloc[0]['weighted_percent'] * 100, 1)
+    demo_records.append(rec)
 
-demo['weighted_percent'] = (demo['weighted_percent'] * 100).round(1)
-
-demo_wide = demo.pivot_table(
-    index='service_mode',
-    columns='measure',
-    values='weighted_percent',
-    aggfunc='first'
-).reset_index()
-
-demo_wide = demo_wide.rename(columns={
-    'service_mode': 'mode',
-    'Title VI low-income population': 'pct_low_income',
-    'Title VI minority population': 'pct_minority',
-    'Zero-vehicle households': 'pct_zero_car'
-})
-
-demo_json = demo_wide.to_json(orient='records')
-demo_wide.to_json("site/data/viz3.json", orient="records")
+demo_json = json.dumps(demo_records)
 
 viz3_html = f"""
 <div id="viz3" style="background:#fff;padding:20px;border-radius:8px;border:1px solid #ddd;font-family:sans-serif;position:relative">
@@ -423,7 +406,6 @@ viz3_html = f"""
 </div>
 
 <div id="viz3-chart"></div>
-<div id="viz3-detail" style="margin-top:12px;font-size:12px;color:#555;"></div>
 
 </div>
 
@@ -435,38 +417,61 @@ viz3_html = f"""
 const data = {demo_json};
 
 const mOrder = ['Bus','Rapid Transit or Bus Rapid Transit','Commuter Rail','Ferry'];
-const mShort = {{'Bus':'Bus','Rapid Transit or Bus Rapid Transit':'Rapid Transit',
-                'Commuter Rail':'Commuter Rail','Ferry':'Ferry'}};
+const mShort = {{
+    'Bus':'Bus',
+    'Rapid Transit or Bus Rapid Transit':'Rapid Transit',
+    'Commuter Rail':'Commuter Rail',
+    'Ferry':'Ferry'
+}};
 
-const mColors = {{'Bus':'#e67e22','Rapid Transit or Bus Rapid Transit':'#2980b9',
-                  'Commuter Rail':'#27ae60','Ferry':'#8e44ad'}};
+const mColors = {{
+    'Bus':'#e67e22',
+    'Rapid Transit or Bus Rapid Transit':'#2980b9',
+    'Commuter Rail':'#27ae60',
+    'Ferry':'#8e44ad'
+}};
 
 const W=700,H=300,M={{t:30,r:50,b:30,l:135}};
 const iW=W-M.l-M.r, iH=H-M.t-M.b;
 
 const svg = d3.select('#viz3-chart').append('svg')
-    .attr('viewBox','0 0 '+W+' '+H).attr('width','100%');
+    .attr('viewBox','0 0 '+W+' '+H)
+    .attr('width','100%');
 
 svg.append('text')
     .attr('x',W/2)
     .attr('y',18)
     .attr('text-anchor','middle')
+    .attr('id','viz3-title')
     .style('font-size','15px')
     .style('font-weight','600')
-    .text('Rider Demographics by Transit Mode (Click for Details)');
+    .text('Rider Demographics by Transit Mode');
 
-const g = svg.append('g').attr('transform','translate('+M.l+','+M.t+')');
+const g = svg.append('g')
+    .attr('transform','translate('+M.l+','+M.t+')');
 
-const yB = d3.scaleBand().domain(mOrder).range([0,iH]).padding(0.3);
-const x  = d3.scaleLinear().domain([0,100]).range([0,iW]);
+const yB = d3.scaleBand()
+    .domain(mOrder)
+    .range([0,iH])
+    .padding(0.3);
 
-g.append('g').call(d3.axisLeft(yB).tickFormat(d=>mShort[d]).tickSize(0));
-g.append('g').attr('transform','translate(0,'+iH+')')
+const x = d3.scaleLinear()
+    .domain([0,100])
+    .range([0,iW]);
+
+g.append('g')
+    .call(d3.axisLeft(yB).tickFormat(d=>mShort[d]).tickSize(0));
+
+g.append('g')
+    .attr('transform','translate(0,'+iH+')')
     .call(d3.axisBottom(x).ticks(5).tickFormat(d=>d+'%'));
 
-let selectedMode = null;
+let selected = null;
 
-const bars = g.selectAll('.dbar').data(data).enter().append('rect')
+const bars = g.selectAll('.dbar')
+    .data(data)
+    .enter()
+    .append('rect')
     .attr('class','dbar')
     .attr('y', d => yB(d.mode))
     .attr('height', yB.bandwidth())
@@ -474,18 +479,32 @@ const bars = g.selectAll('.dbar').data(data).enter().append('rect')
     .attr('fill', d => mColors[d.mode])
     .style('cursor','pointer')
     .on('click', function(event, d) {{
-        selectedMode = (selectedMode === d.mode) ? null : d.mode;
-        updateDetail(d);
-        bars.style('opacity', b => (!selectedMode || b.mode === selectedMode) ? 1 : 0.3);
+        selected = (selected === d.mode) ? null : d.mode;
+
+        bars.style('opacity', b =>
+            (!selected || b.mode === selected) ? 1 : 0.3
+        );
     }});
 
-const vals = g.selectAll('.vlbl').data(data).enter().append('text')
+const vals = g.selectAll('.vlbl')
+    .data(data)
+    .enter()
+    .append('text')
     .attr('class','vlbl')
     .attr('y', d => yB(d.mode) + yB.bandwidth()/2 + 5)
     .style('font-size','12px')
     .style('font-weight','600');
 
 function update(measure) {{
+
+    const titles = {{
+        pct_low_income: '% Title VI Low-Income Riders by Mode',
+        pct_minority: '% Title VI Minority Riders by Mode',
+        pct_zero_car: '% Zero-Vehicle Households by Mode'
+    }};
+
+    d3.select('#viz3-title').text(titles[measure]);
+
     bars.transition().duration(500)
         .attr('x', 0)
         .attr('width', d => x(d[measure] || 0));
@@ -495,29 +514,17 @@ function update(measure) {{
         .text(d => (d[measure] || 0).toFixed(1) + '%');
 }}
 
-function updateDetail(d) {{
-    if (!d) {{
-        d3.select('#viz3-detail').text('');
-        return;
-    }}
-
-    d3.select('#viz3-detail')
-        .html('<b>'+d.mode+'</b> shows:<br>' +
-              '• Low-income riders: ' + d.pct_low_income + '%<br>' +
-              '• Minority riders: ' + d.pct_minority + '%<br>' +
-              '• Zero-car households: ' + d.pct_zero_car + '%<br><br>' +
-              '<i>This mode likely reflects different neighborhood access patterns and socioeconomic usage.</i>');
-}}
-
 update('pct_low_income');
 
-document.getElementById('demo-select').addEventListener('change', function() {{
-    update(this.value);
-}});
+document.getElementById('demo-select')
+    .addEventListener('change', function() {{
+        update(this.value);
+    }});
 
 }})();
 </script>
 """
+
 HTML(viz3_html)
 
 """Visualization #3 Takeaway: Demographic patterns vary significantly across transit modes, with bus riders representing the most economically vulnerable group, showing the highest shares of low-income, minority, and zero-vehicle households. In contrast, ferry riders reflect a more affluent profile with substantially lower percentages across these measures. This highlights how different transit systems serve distinct populations, and the dropdown interaction allows for deeper comparison across demographic dimensions.
@@ -890,3 +897,4 @@ At the route level, we identified clear differences in performance. Some routes 
 
 Finally, by introducing error rate alongside accuracy, we were able to better highlight routes with higher levels of unreliability. Overall, our findings show that transit reliability is unevenly distributed, which may contribute to unequal transit experiences across different communities in Boston.
 """
+print(sorted(survey['measure'].dropna().unique()))
