@@ -371,18 +371,16 @@ Bus and subway show opposite accuracy patterns across prediction windows.Bus acc
 """
 
 # VIZ 3 — D3 — Rider Demographics by Mode (Dropdown Filter)
+
 # VIZ 3 — D3 — Rider Demographics by Mode (Dropdown Filter)
-
-from IPython.display import HTML
-
 # Prepare demographic data for Viz 3
 demo = survey[survey['aggregation_level'] == 'Service Mode'].copy()
 
 demo = demo[
     demo['measure'].isin([
-        'Title VI Low-Income',
-        'Title VI Minority',
-        'Cars per Capita'
+        'Title VI low-income population',
+        'Title VI minority population',
+        'Zero-vehicle households'
     ])
 ][['service_mode', 'measure', 'weighted_percent']]
 
@@ -393,8 +391,8 @@ demo = demo[demo['service_mode'].isin([
     'Ferry'
 ])]
 
-# Convert Cars per Capita into a proxy for zero-car households if needed
-# Lower cars per capita = more transit dependence
+demo['weighted_percent'] = (demo['weighted_percent'] * 100).round(1)
+
 demo_wide = demo.pivot_table(
     index='service_mode',
     columns='measure',
@@ -404,22 +402,13 @@ demo_wide = demo.pivot_table(
 
 demo_wide = demo_wide.rename(columns={
     'service_mode': 'mode',
-    'Title VI Low-Income': 'pct_low_income',
-    'Title VI Minority': 'pct_minority',
-    'Cars per Capita': 'cars_per_capita'
+    'Title VI low-income population': 'pct_low_income',
+    'Title VI minority population': 'pct_minority',
+    'Zero-vehicle households': 'pct_zero_car'
 })
 
-# Create a simple comparable measure for display
-# You can label this differently in the chart if preferred
-demo_wide['pct_zero_car'] = (1 - demo_wide['cars_per_capita'].fillna(0)).clip(lower=0) * 100
-
-# Convert percentage columns
-demo_wide['pct_low_income'] = (demo_wide['pct_low_income'] * 100).round(1)
-demo_wide['pct_minority'] = (demo_wide['pct_minority'] * 100).round(1)
-demo_wide['pct_zero_car'] = demo_wide['pct_zero_car'].round(1)
-
-demo_json = demo_wide[['mode', 'pct_low_income', 'pct_minority', 'pct_zero_car']].to_json(orient='records')
-demo_wide[['mode', 'pct_low_income', 'pct_minority', 'pct_zero_car']].to_json("site/data/viz3.json", orient="records")
+demo_json = demo_wide.to_json(orient='records')
+#demo_wide.to_json("site/data/viz3.json", orient="records")
 
 viz3_html = f"""
 <div id="viz3" style="background:#fff;padding:20px;border-radius:8px;border:1px solid #ddd;font-family:sans-serif;position:relative">
@@ -429,7 +418,7 @@ viz3_html = f"""
   <select id="demo-select" style="font-size:13px;padding:3px 6px;border-radius:4px;border:1px solid #ccc">
     <option value="pct_low_income">% Title VI Low-Income</option>
     <option value="pct_minority">% Title VI Minority</option>
-    <option value="pct_zero_car">% Low Car Access</option>
+    <option value="pct_zero_car">% Zero-Vehicle Households</option>
   </select>
 </div>
 
@@ -516,7 +505,7 @@ function updateDetail(d) {{
         .html('<b>'+d.mode+'</b> shows:<br>' +
               '• Low-income riders: ' + d.pct_low_income + '%<br>' +
               '• Minority riders: ' + d.pct_minority + '%<br>' +
-              '• Low car access: ' + d.pct_zero_car + '%<br><br>' +
+              '• Zero-car households: ' + d.pct_zero_car + '%<br><br>' +
               '<i>This mode likely reflects different neighborhood access patterns and socioeconomic usage.</i>');
 }}
 
@@ -529,7 +518,7 @@ document.getElementById('demo-select').addEventListener('change', function() {{
 }})();
 </script>
 """
-HTML(viz3_html)
+#HTML(viz3_html)
 
 """Visualization #3 Takeaway: Demographic patterns vary significantly across transit modes, with bus riders representing the most economically vulnerable group, showing the highest shares of low-income, minority, and zero-vehicle households. In contrast, ferry riders reflect a more affluent profile with substantially lower percentages across these measures. This highlights how different transit systems serve distinct populations, and the dropdown interaction allows for deeper comparison across demographic dimensions.
 
