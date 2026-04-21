@@ -371,52 +371,86 @@ Bus and subway show opposite accuracy patterns across prediction windows.Bus acc
 """
 
 # VIZ 3 — D3 — Rider Demographics by Mode (Dropdown Filter)
-# VIZ 3 — D3 — Rider Demographics by Mode (Dropdown Filter)
 
-demo = survey[survey['aggregation_level'] == 'Service Mode'].copy()
+# VIZ 3 — D3 — Rider Demographics by Mode (Dropdown + Click Interaction)
+# print("aggregation levels:")
+# print(sorted(survey['aggregation_level'].dropna().unique()))
+
+# print("\nservice modes:")
+# print(sorted(survey['service_mode'].dropna().unique()))
+
+# print("\nmeasures:")
+# print(sorted(survey['measure'].dropna().unique()))
+
+# print("\nUsable Cars categories:")
+# print(sorted(survey[survey['measure'] == 'Usable Cars']['category'].dropna().astype(str).unique()))
+
+# print("\nTitle VI Low-Income categories:")
+# print(sorted(survey[survey['measure'] == 'Title VI Low-Income']['category'].dropna().astype(str).unique()))
+
+# print("\nTitle VI Minority categories:")
+# print(sorted(survey[survey['measure'] == 'Title VI Minority']['category'].dropna().astype(str).unique()))
+import os
+from IPython.display import HTML
+
+os.makedirs("site/data", exist_ok=True)
+
+demo = survey.copy()
+
+demo['aggregation_level'] = demo['aggregation_level'].astype(str).str.strip()
+
+demo['service_mode'] = demo['service_mode'].astype(str).str.strip()
+
+demo['measure'] = demo['measure'].astype(str).str.strip()
+
+demo['category'] = demo['category'].astype(str).str.strip()
 
 demo = demo[
-    demo['measure'].isin([
-        'Title VI Low-Income',
-        'Title VI Minority',
-        'Usable Cars'
-    ])
-][['service_mode', 'measure', 'category', 'weighted_percent']]
+
+    demo['aggregation_level'] == 'Service Mode'
+
+]
 
 demo = demo[demo['service_mode'].isin([
+
     'Bus',
+
     'Rapid Transit or Bus Rapid Transit',
+
     'Commuter Rail',
+
     'Ferry'
+
 ])]
 
-# Keep the values you actually want
 low_income = demo[
     (demo['measure'] == 'Title VI Low-Income') &
-    (demo['category'] == 'Yes')
+    (demo['category'].str.lower() == 'yes')
 ][['service_mode', 'weighted_percent']].rename(columns={'weighted_percent': 'pct_low_income'})
 
 minority = demo[
     (demo['measure'] == 'Title VI Minority') &
-    (demo['category'] == 'Yes')
+    (demo['category'].str.lower() == 'yes')
 ][['service_mode', 'weighted_percent']].rename(columns={'weighted_percent': 'pct_minority'})
 
 zero_car = demo[
     (demo['measure'] == 'Usable Cars') &
-    (demo['category'].astype(str).str.strip() == '0')
+    (demo['category'] == '0')
 ][['service_mode', 'weighted_percent']].rename(columns={'weighted_percent': 'pct_zero_car'})
 
-demo_wide = low_income.merge(minority, on='service_mode', how='outer') \
-                      .merge(zero_car, on='service_mode', how='outer') \
-                      .fillna(0)
+demo_wide = low_income.merge(minority, on='service_mode', how='outer')
+demo_wide = demo_wide.merge(zero_car, on='service_mode', how='outer').fillna(0)
 
 demo_wide = demo_wide.rename(columns={'service_mode': 'mode'})
 
 for col in ['pct_low_income', 'pct_minority', 'pct_zero_car']:
     demo_wide[col] = (demo_wide[col] * 100).round(1)
 
+print(demo_wide)
+
 demo_json = demo_wide.to_json(orient='records')
 demo_wide.to_json("site/data/viz3.json", orient="records")
+print(demo_json)
 
 viz3_html = f"""
 <div id="viz3" style="background:#fff;padding:20px;border-radius:8px;border:1px solid #ddd;font-family:sans-serif;position:relative">
@@ -551,6 +585,7 @@ document.getElementById('demo-select')
 """
 
 HTML(viz3_html)
+    
 
 """Visualization #3 Takeaway: Demographic patterns vary significantly across transit modes, with bus riders representing the most economically vulnerable group, showing the highest shares of low-income, minority, and zero-vehicle households. In contrast, ferry riders reflect a more affluent profile with substantially lower percentages across these measures. This highlights how different transit systems serve distinct populations, and the dropdown interaction allows for deeper comparison across demographic dimensions.
 
