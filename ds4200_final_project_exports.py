@@ -408,7 +408,7 @@ demo_wide = demo_wide.rename(columns={
 })
 
 demo_json = demo_wide.to_json(orient='records')
-#demo_wide.to_json("site/data/viz3.json", orient="records")
+demo_wide.to_json("site/data/viz3.json", orient="records")
 
 viz3_html = f"""
 <div id="viz3" style="background:#fff;padding:20px;border-radius:8px;border:1px solid #ddd;font-family:sans-serif;position:relative">
